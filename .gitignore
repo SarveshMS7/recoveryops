@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Environment / secrets — never commit real credentials
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Test / coverage artifacts
+coverage/
+
+# Python (ml/ training script artifacts)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Antigravity local state (if it writes anything project-local beyond .agents/rules)
+.gemini/
