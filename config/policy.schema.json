@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "recoveryops-policy-config",
+  "title": "RecoveryOps Policy Configuration",
+  "description": "Configuration for the policy engine's four rule types.",
+  "type": "object",
+  "required": ["retry_limit", "cooldown", "spend_cap", "compliance_window"],
+  "additionalProperties": false,
+  "properties": {
+    "retry_limit": {
+      "type": "object",
+      "description": "Maximum number of retry attempts allowed per event.",
+      "required": ["max_attempts"],
+      "additionalProperties": false,
+      "properties": {
+        "max_attempts": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "The maximum number of execution attempts. At-limit passes; one over fails."
+        }
+      }
+    },
+    "cooldown": {
+      "type": "object",
+      "description": "Minimum elapsed time since the last attempt before another attempt is allowed.",
+      "required": ["min_interval_seconds"],
+      "additionalProperties": false,
+      "properties": {
+        "min_interval_seconds": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Seconds that must elapse after the last attempt. Just-after passes; just-before fails."
+        }
+      }
+    },
+    "spend_cap": {
+      "type": "object",
+      "description": "Maximum total spend (in INR) across all actions for a merchant in a calendar day.",
+      "required": ["daily_limit_inr"],
+      "additionalProperties": false,
+      "properties": {
+        "daily_limit_inr": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Daily spend cap in INR. Exactly-at-cap passes; one rupee over fails."
+        }
+      }
+    },
+    "compliance_window": {
+      "type": "object",
+      "description": "Time-of-day window during which actions may be executed (IST).",
+      "required": ["start_hour", "end_hour"],
+      "additionalProperties": false,
+      "properties": {
+        "start_hour": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 23,
+          "description": "Start hour (inclusive) in IST (0-23)."
+        },
+        "end_hour": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 23,
+          "description": "End hour (exclusive) in IST (0-23)."
+        }
+      }
+    }
+  }
+}
