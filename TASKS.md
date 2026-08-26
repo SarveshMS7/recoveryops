@@ -70,12 +70,15 @@ Verified: `npx vitest run tests/unit/policy.test.ts` — 28 tests passed
 (0 failed). Boundary cases: at-limit=pass/one-over=fail, just-after=pass/
 just-before=fail, at-cap=pass/one-rupee-over=fail, inside=pass/outside=fail.
 
-**⬜ Task 5 — Allocator**
+**✅ Task 5 — Allocator**
 `domain/allocator.ts`: given `{event_id, expected_value, cost}[]` and a
 budget, return the selected set via greedy sort by expected_value/cost
 descending, until budget is exhausted.
 **Done when:** a test with a fixed, known input list asserts the *exact*
 selected set and *exact* skipped set — not an approximate check.
+Verified: `npx vitest run tests/unit/allocator.test.ts` — 12 tests passed
+(0 failed). Fixed input [A,B,C,D,E] with budget 350 → exact allocated
+[C,A,D], exact skipped [E,B], plus edge cases.
 
 **⬜ Task 6 — Scoring function**
 `domain/scoring.ts`: pure function taking an event's feature vector + a
