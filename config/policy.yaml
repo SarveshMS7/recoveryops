@@ -1,0 +1,15 @@
+# RecoveryOps — Policy Configuration
+# Shape defined by config/policy.schema.json
+
+retry_limit:
+  max_attempts: 3           # At most 3 attempts; 4th is rejected
+
+cooldown:
+  min_interval_seconds: 3600  # 1 hour between attempts
+
+spend_cap:
+  daily_limit_inr: 100000    # ₹1,00,000 daily cap per merchant
+
+compliance_window:
+  start_hour: 8              # 08:00 IST (inclusive)
+  end_hour: 21               # 21:00 IST (exclusive) — no actions after 9 PM
