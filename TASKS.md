@@ -129,12 +129,16 @@ LLM enum validation, event bus dispatch, and outbox lifecycle — zero I/O.
 
 ## Application layer (orchestration, tested against mocks first)
 
-**⬜ Task 9 — Ingest + dedupe + outbox write**
+**✅ Task 9 — Ingest + dedupe + outbox write**
 `application/ingest_event.ts`: normalize, dedupe on `dedupe_key`, write
 `risk_event` + `outbox` row in a single transaction.
 **Done when:** integration test against real Postgres proves a duplicate
 dedupe_key produces exactly one risk_event row, and a simulated write
 failure mid-transaction leaves no partial row.
+Verified: `npx vitest run tests/integration/ingest_event.test.ts` — 4 tests
+passed (0 failed). Duplicate dedupe_key → exactly 1 row. Transaction
+rollback mid-write → 0 rows (no partial data). Concurrent 5x ingest →
+exactly 1 row. Full suite: 139 tests passed.
 
 **⬜ Task 10 — Outbox poller**
 `adapters/outbox/poller.ts` implementing `event_bus`: polls unsent rows,
