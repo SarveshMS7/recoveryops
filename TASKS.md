@@ -106,17 +106,24 @@ expected_value≈1553.015 (hand-computed, hardcoded assertions).
 
 ## Ports and mock adapters (unblocks parallel work)
 
-**⬜ Task 7 — Define all ports**
+**✅ Task 7 — Define all ports**
 Interfaces only in `ports/`: event_repository, payment_gateway,
 notification_gateway, llm_client, event_bus.
 **Done when:** it compiles and every method used anywhere else in the plan
 has a signature here.
+Verified: `npx tsc -p tsconfig.json --noEmit` — zero errors. All five
+ports defined with full method signatures in `ports/`. Shared types in
+`ports/types.ts`, barrel export in `ports/index.ts`.
 
-**⬜ Task 8 — Mock adapters**
+**✅ Task 8 — Mock adapters**
 `adapters/mock/`: in-memory fakes for every port, including a configurable
 failure-injection flag (e.g. `mockGateway.forceFailureFor(eventId, times)`).
 **Done when:** application-layer code can run entirely against mocks with
 zero real network/DB calls, and a smoke test proves it.
+Verified: `npx vitest run` — 135 tests passed (0 failed), including 12
+new smoke tests in `tests/unit/mock_adapters.test.ts` covering full
+pipeline flow, dedupe, idempotency, failure injection for all 5 ports,
+LLM enum validation, event bus dispatch, and outbox lifecycle — zero I/O.
 
 ---
 
