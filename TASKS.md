@@ -80,7 +80,7 @@ Verified: `npx vitest run tests/unit/allocator.test.ts` — 12 tests passed
 (0 failed). Fixed input [A,B,C,D,E] with budget 350 → exact allocated
 [C,A,D], exact skipped [E,B], plus edge cases.
 
-**⬜ Task 6 — Scoring function**
+**✅ Task 6 — Scoring function**
 `domain/scoring.ts`: pure function taking an event's feature vector + a
 coefficients object, returning p_loss, p_uplift, expected_value via
 dot-product + sigmoid. Coefficients are injected, not hardcoded.
@@ -97,6 +97,10 @@ type Coefficients = {
 **Done when:** unit test with known coefficients and known input produces
 the exact expected output value, computed independently (e.g. by hand or in
 a spreadsheet) and hardcoded as the assertion.
+Verified: `npx vitest run tests/unit/scoring.test.ts` — 19 tests passed
+(0 failed). Golden values: intercept=0.5, weights=[0.3,-0.2,0.8],
+features=[1.0,2.0,0.5], amount=5000 → p_loss≈0.6899745, p_uplift≈0.4501660,
+expected_value≈1553.015 (hand-computed, hardcoded assertions).
 
 ---
 
