@@ -68,8 +68,9 @@ export class MockLlmClient implements LlmClient {
     // Check for per-event override
     const override = this.overrides.get(request.event_id);
     if (override) {
-      // Validate the action is in the closed enum (even for overrides)
-      this.validateAction(override.selected_action);
+      // Return the override as-is — validation is the application layer's
+      // responsibility (AGENTS.md hard rule #2).  This allows tests to
+      // inject invalid actions and verify they are caught upstream.
       return override;
     }
 

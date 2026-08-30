@@ -392,7 +392,7 @@ describe("Mock adapters smoke test — full flow with zero I/O", () => {
     expect(response.selected_action).toBe("retry_now");
   });
 
-  it("should reject LLM responses with invalid actions", async () => {
+  it("should return LLM override responses as-is (validation is the caller's job)", async () => {
     const eventId = "event-bad-action";
     llm.setResponseFor(eventId, {
       root_cause_summary: "Test",
@@ -400,17 +400,19 @@ describe("Mock adapters smoke test — full flow with zero I/O", () => {
       rationale: "Bad action",
     });
 
-    await expect(
-      llm.analyse({
-        event_id: eventId,
-        source_type: "payment_failure",
-        amount: 1000,
-        currency: "INR",
-        raw_reason: null,
-        attempt_count: 0,
-        context: {},
-      }),
-    ).rejects.toThrow("not in the closed enum");
+    // The mock returns the override without validation — the application
+    // layer is responsible for checking the action against the closed enum
+    // (AGENTS.md hard rule #2, tested in integration/execute_decision.test.ts).
+    const response = await llm.analyse({
+      event_id: eventId,
+      source_type: "payment_failure",
+      amount: 1000,
+      currency: "INR",
+      raw_reason: null,
+      attempt_count: 0,
+      context: {},
+    });
+    expect(response.selected_action).toBe("launch_missiles");
   });
 
   it("should support failure injection on MockEventBus", async () => {

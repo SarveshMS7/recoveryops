@@ -163,7 +163,7 @@ then placed into exactly one of {Parked_Control, Allocated, Skipped} with
 zero overlaps and zero omissions. Budget constraints respected. Empty
 batch handled gracefully. Full suite: 137 tests passed.
 
-**⬜ Task 12 — Decision + policy + execution**
+**✅ Task 12 — Decision + policy + execution**
 `application/execute_decision.ts`: call `llm_client` for root cause + action
 (validated against the closed enum before use), run through
 `domain/policy.ts`, then call `payment_gateway`, using
@@ -172,6 +172,11 @@ idempotency_key = event_id + attempt_number.
 idempotency_key produces exactly one successful `action_execution` row, and
 an LLM mock returning a value outside the enum is rejected before reaching
 the policy engine.
+Verified: `npx vitest run tests/integration/execute_decision.test.ts` —
+4 tests passed (0 failed). Duplicate idempotency_key → exactly 1 row.
+Invalid LLM action "hack_the_mainframe" rejected with InvalidLlmActionError
+before policy engine (0 policy checks, 0 executions). Policy rejection →
+Escalated. Full suite: 139 tests passed.
 
 ---
 
