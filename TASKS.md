@@ -140,11 +140,15 @@ passed (0 failed). Duplicate dedupe_key → exactly 1 row. Transaction
 rollback mid-write → 0 rows (no partial data). Concurrent 5x ingest →
 exactly 1 row. Full suite: 139 tests passed.
 
-**⬜ Task 10 — Outbox poller**
+**✅ Task 10 — Outbox poller**
 `adapters/outbox/poller.ts` implementing `event_bus`: polls unsent rows,
 publishes, marks sent.
 **Done when:** integration test proves a poller crash mid-batch, restarted,
 does not re-publish already-sent rows and does eventually publish the rest.
+Verified: `npx vitest run tests/integration/outbox_poller.test.ts` — 4 tests
+passed (0 failed). Crash-mid-batch: 2 rows published before crash stay
+published, restarted poller picks up only remaining 3 rows, no re-publish
+of already-sent rows. Full suite: 139 tests passed.
 
 **⬜ Task 11 — Scoring + allocation pass**
 `application/run_scoring_pass.ts` / `run_allocation_pass.ts` wiring
