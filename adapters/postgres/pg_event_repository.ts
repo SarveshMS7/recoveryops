@@ -243,7 +243,9 @@ export class PgEventRepository implements EventRepository {
   async findScoredUnallocatedEvents(): Promise<
     Array<{ event: RiskEvent; score: Score }>
   > {
-    // Events that have a score but no decision yet (haven't been allocated/skipped/parked)
+    // Events that have a score and whose latest state is "Scored"
+    // (not yet allocated/skipped/parked).  The state is tracked via
+    // audit_log entries written by updateState().
     const result = await this.pool.query(
       `SELECT re.*, s.id AS s_id, s.event_id AS s_event_id,
               s.p_loss AS s_p_loss, s.p_uplift AS s_p_uplift,
@@ -251,8 +253,11 @@ export class PgEventRepository implements EventRepository {
               s.scored_at AS s_scored_at
        FROM risk_event re
        JOIN score s ON s.event_id = re.id
-       LEFT JOIN decision d ON d.event_id = re.id
-       WHERE d.id IS NULL`,
+       WHERE NOT EXISTS (
+         SELECT 1 FROM audit_log al
+         WHERE al.event_id = re.id
+           AND al.stage IN ('Allocated', 'Skipped', 'Parked_Control')
+       )`,
     );
     return (result.rows as Record<string, unknown>[]).map((row) => ({
       event: mapRiskEvent(row),

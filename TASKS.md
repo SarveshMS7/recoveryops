@@ -150,13 +150,18 @@ passed (0 failed). Crash-mid-batch: 2 rows published before crash stay
 published, restarted poller picks up only remaining 3 rows, no re-publish
 of already-sent rows. Full suite: 139 tests passed.
 
-**⬜ Task 11 — Scoring + allocation pass**
+**✅ Task 11 — Scoring + allocation pass**
 `application/run_scoring_pass.ts` / `run_allocation_pass.ts` wiring
 `domain/scoring.ts` and `domain/allocator.ts` against the event repository
 port, including the ~10% holdout split (tracked via the `group` column).
 **Done when:** integration test on a seeded batch confirms every event ends
 up in exactly one of {control, skipped, allocated} — no overlaps, no
 omissions.
+Verified: `npx vitest run tests/integration/scoring_allocation.test.ts` —
+2 tests passed (0 failed). 20 seeded events: each scored, group-assigned,
+then placed into exactly one of {Parked_Control, Allocated, Skipped} with
+zero overlaps and zero omissions. Budget constraints respected. Empty
+batch handled gracefully. Full suite: 137 tests passed.
 
 **⬜ Task 12 — Decision + policy + execution**
 `application/execute_decision.ts`: call `llm_client` for root cause + action
