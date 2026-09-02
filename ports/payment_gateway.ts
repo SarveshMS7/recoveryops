@@ -46,4 +46,13 @@ export interface PaymentGateway {
    * result.
    */
   executeAction(request: PaymentActionRequest): Promise<PaymentActionResponse>;
+
+  /** Log of all calls made, for test assertions. */
+  readonly calls: PaymentActionRequest[];
+
+  /** Configure the mock to return a "failed" result for the next N calls. */
+  forceFailureFor(eventId: string, times: number): void;
+
+  /** Reset all state. */
+  reset(): void;
 }

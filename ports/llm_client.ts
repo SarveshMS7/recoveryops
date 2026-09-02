@@ -10,7 +10,22 @@
  * output), adapters/mock/ (deterministic fake).
  */
 
+import { VALID_ACTIONS } from "./types.js";
 import type { SelectedAction, SourceType } from "./types.js";
+
+// ── Error for invalid LLM action ──────────────────────────────────
+
+export class InvalidLlmActionError extends Error {
+  public readonly action: string;
+
+  constructor(action: string) {
+    super(
+      `LLM returned action "${action}" which is not in the closed enum [${VALID_ACTIONS.join(", ")}]. Rejected before reaching the policy engine.`,
+    );
+    this.name = "InvalidLlmActionError";
+    this.action = action;
+  }
+}
 
 // ── Request / Response ─────────────────────────────────────────────
 
@@ -49,4 +64,16 @@ export interface LlmClient {
    *         the adapter must validate before returning.
    */
   analyse(request: LlmAnalysisRequest): Promise<LlmAnalysisResponse>;
+
+  /** Log of all analysis requests, for test assertions. */
+  readonly calls: LlmAnalysisRequest[];
+  
+  /** Override the response for a specific event ID. */
+  setResponseFor(eventId: string, response: LlmAnalysisResponse): void;
+  
+  /** Configure the mock to return a failure for the next N calls. */
+  forceFailureFor(eventId: string, times: number): void;
+  
+  /** Reset all state. */
+  reset(): void;
 }

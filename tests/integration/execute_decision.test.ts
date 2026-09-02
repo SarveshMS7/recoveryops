@@ -17,8 +17,8 @@ import pg from "pg";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { PgEventRepository } from "../../adapters/postgres/pg_event_repository.js";
-import { MockLlmClient } from "../../adapters/mock/mock_llm_client.js";
-import { MockPaymentGateway } from "../../adapters/mock/mock_payment_gateway.js";
+import { GeminiLlmClient } from "../../adapters/llm/gemini_llm_client.js";
+import { RazorpayPaymentGateway } from "../../adapters/razorpay/razorpay_payment_gateway.js";
 import { ingestEvent } from "../../application/ingest_event.js";
 import {
   runScoringPass,
@@ -27,8 +27,9 @@ import {
 import { runAllocationPass } from "../../application/run_allocation_pass.js";
 import {
   executeDecision,
-  InvalidLlmActionError,
 } from "../../application/execute_decision.js";
+import { InvalidLlmActionError } from "../../ports/llm_client.js";
+
 import type { PolicyConfig } from "../../domain/policy.js";
 import type { SelectedAction } from "../../ports/types.js";
 
@@ -47,8 +48,8 @@ const ADMIN_POOL_CONFIG = {
 let adminPool: InstanceType<typeof Pool>;
 let appPool: InstanceType<typeof Pool>;
 let repo: PgEventRepository;
-let llm: MockLlmClient;
-let gateway: MockPaymentGateway;
+let llm: GeminiLlmClient;
+let gateway: RazorpayPaymentGateway;
 
 // Policy that passes for first attempts during business hours
 const testPolicyConfig: PolicyConfig = {
@@ -106,8 +107,8 @@ afterAll(async () => {
 });
 
 beforeEach(() => {
-  llm = new MockLlmClient();
-  gateway = new MockPaymentGateway();
+  llm = new GeminiLlmClient({ api_key: "dummy" });
+  gateway = new RazorpayPaymentGateway({ key_id: "dummy", key_secret: "dummy" });
 });
 
 // ── Helpers ────────────────────────────────────────────────────────

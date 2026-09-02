@@ -21,6 +21,8 @@
 
 import type { EventRepository } from "../ports/event_repository.js";
 import type { LlmClient } from "../ports/llm_client.js";
+import { InvalidLlmActionError } from "../ports/llm_client.js";
+
 import type { PaymentGateway } from "../ports/payment_gateway.js";
 import type { RiskEvent, SelectedAction } from "../ports/types.js";
 import { VALID_ACTIONS } from "../ports/types.js";
@@ -31,19 +33,6 @@ import {
 } from "../domain/policy.js";
 import { transition, EventState } from "../domain/state_machine.js";
 
-// ── Error for invalid LLM action ──────────────────────────────────
-
-export class InvalidLlmActionError extends Error {
-  public readonly action: string;
-
-  constructor(action: string) {
-    super(
-      `LLM returned action "${action}" which is not in the closed enum [${VALID_ACTIONS.join(", ")}]. Rejected before reaching the policy engine.`,
-    );
-    this.name = "InvalidLlmActionError";
-    this.action = action;
-  }
-}
 
 // ── Result types ──────────────────────────────────────────────────
 

@@ -182,8 +182,8 @@ Escalated. Full suite: 139 tests passed.
 
 ## Real adapters
 
-**⬜ Task 13 — Razorpay adapter** (payment_gateway, against test-mode APIs)
-**⬜ Task 14 — LLM adapter** (llm_client, closed-enum-constrained)
+**✅ Task 13 — Razorpay adapter** (payment_gateway, against test-mode APIs)
+**✅ Task 14 — LLM adapter** (llm_client, closed-enum-constrained)
 **Done when (both):** the same integration tests from Task 12 pass
 unmodified against the real adapter instead of the mock. If they don't pass
 unmodified, the port interface was leaky — fix the boundary, not the test.
