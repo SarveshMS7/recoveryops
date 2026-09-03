@@ -220,7 +220,7 @@ split, and a golden-value test in `tests/unit/scoring.test.ts` confirms the
 Node runtime scorer produces the same output as the Python model on an
 identical input.
 
-**⬜ Task 19 — Second detector: failed-subscription**
+**✅ Task 19 — Second detector: failed-subscription**
 New `source_type` through the existing Event Normalizer, own synthetic
 feed, reusing every downstream component unmodified.
 **Done when:** it flows through the entire pipeline with zero changes to

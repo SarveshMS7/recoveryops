@@ -186,3 +186,40 @@ describe("Scoring: Coefficients type", () => {
     expect(result.p_loss).toBeCloseTo(GOLDEN_P_LOSS, 10);
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// 6. Python ML golden-value test (Task 18)
+// ═══════════════════════════════════════════════════════════════════
+
+describe("Scoring: Python ML golden-value test", () => {
+  it("produces identical output to the Python model for a given input", () => {
+    const pythonCoeffs: Coefficients = {
+      intercept: 0.010192491427244372,
+      weights: [
+        -1.0255364292573525e-05,
+        0.5813283704571736,
+        -0.6156233150868259,
+        0.6228075725876266
+      ],
+      feature_order: [
+        "amount_inr",
+        "is_retryable",
+        "is_payment_failure",
+        "is_checkout_abandon"
+      ]
+    };
+
+    const pythonInput: ScoreInput = {
+      features: [5000, 1, 1, 0], // e.g. 5000 INR, retryable, payment_failure
+      amount: 5000,
+    };
+
+    const result = score(pythonCoeffs, pythonInput);
+    
+    // Calculated exactly by the Python script:
+    // logit = 0.010192491427244372 + (5000 * -0.000010255364292573525) + (1 * 0.5813283704571736) + (1 * -0.6156233150868259) + 0
+    // logit = -0.07537927466527555
+    // p_loss = sigmoid(logit) = 0.4811640993431508
+    expect(result.p_loss).toBeCloseTo(0.4811640993431508, 10);
+  });
+});
