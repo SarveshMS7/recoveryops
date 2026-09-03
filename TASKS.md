@@ -192,15 +192,15 @@ unmodified, the port interface was leaky — fix the boundary, not the test.
 
 ## Chaos tests (use the mock's failure-injection flag from Task 8)
 
-**⬜ Task 15 — Retry-then-stop**
+**✅ Task 15 — Retry-then-stop**
 Force failure on attempts 1–2; assert the state machine reaches `Stopped`
 after the configured limit, not further retries.
 
-**⬜ Task 16 — Concurrent execution / idempotency**
+**✅ Task 16 — Concurrent execution / idempotency**
 Fire two simultaneous `execute_decision` calls for one event; assert exactly
 one `Succeeded` row exists afterward.
 
-**⬜ Task 17 — Duplicate inbound event**
+**✅ Task 17 — Duplicate inbound event**
 Fire the same normalized payload twice through `ingest_event`; assert
 exactly one `risk_event` row exists.
 
@@ -208,7 +208,7 @@ exactly one `risk_event` row exists.
 
 ## Model + rigor (Week 2)
 
-**⬜ Task 18 — Offline training script**
+**✅ Task 18 — Offline training script**
 Python script in `ml/` (scikit-learn): train a logistic regression on the
 Task 3.5 synthetic dataset, do a real train/test split, output
 `ml/coefficients.json` **matching the shape defined in Task 6 exactly**

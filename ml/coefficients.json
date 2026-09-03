@@ -1,0 +1,15 @@
+{
+  "intercept": 0.010192491427244372,
+  "weights": [
+    -1.0255364292573525e-05,
+    0.5813283704571736,
+    -0.6156233150868259,
+    0.6228075725876266
+  ],
+  "feature_order": [
+    "amount_inr",
+    "is_retryable",
+    "is_payment_failure",
+    "is_checkout_abandon"
+  ]
+}

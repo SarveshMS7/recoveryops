@@ -39,6 +39,7 @@ import { transition, EventState } from "../domain/state_machine.js";
 export type ExecutionOutcome =
   | { readonly status: "succeeded" }
   | { readonly status: "failed"; readonly detail: string | null }
+  | { readonly status: "stopped"; readonly detail: string | null }
   | { readonly status: "policy_rejected"; readonly reason: string }
   | { readonly status: "invalid_action"; readonly action: string }
   | { readonly status: "idempotent_skip" };
@@ -231,6 +232,12 @@ export async function executeDecision(
 
     const stFailed = transition(EventState.Executing, EventState.Failed);
     await repo.updateState(event.id, stFailed);
+
+    if (attemptNumber >= policyConfig.retry_limit.max_attempts) {
+      const stStopped = transition(EventState.Failed, EventState.Stopped);
+      await repo.updateState(event.id, stStopped);
+      return { status: "stopped", detail: gatewayResponse.detail };
+    }
 
     return { status: "failed", detail: gatewayResponse.detail };
   }
