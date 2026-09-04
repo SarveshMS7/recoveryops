@@ -1,0 +1,170 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f6f8;
+  color: #1a1a1a;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.header {
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e1e4e8;
+  padding-bottom: 16px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #0366d6;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e1e4e8;
+  border-radius: 6px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.card h2 {
+  margin-top: 0;
+  font-size: 18px;
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #eaecef;
+}
+
+th {
+  background-color: #f6f8fa;
+  font-weight: 600;
+  color: #24292e;
+}
+
+tr:hover {
+  background-color: #f1f8ff;
+}
+
+.clickable {
+  cursor: pointer;
+  color: #0366d6;
+}
+
+.clickable:hover {
+  text-decoration: underline;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #e1e4e8;
+  color: #24292e;
+}
+
+.badge.succeeded { background: #28a745; color: white; }
+.badge.failed { background: #d73a49; color: white; }
+.badge.detected { background: #dbab09; color: white; }
+.badge.treatment { background: #6f42c1; color: white; }
+.badge.control { background: #6a737d; color: white; }
+
+.timeline {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e1e4e8;
+  left: 10px;
+}
+.timeline li {
+  position: relative;
+  margin-bottom: 16px;
+  padding-left: 32px;
+}
+.timeline li::before {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #0366d6;
+  left: 5px;
+  top: 5px;
+  border: 2px solid white;
+}
+.timeline-time {
+  font-size: 12px;
+  color: #6a737d;
+  margin-bottom: 4px;
+}
+.timeline-stage {
+  font-weight: bold;
+}
+.metric-box {
+  text-align: center;
+  padding: 16px;
+  background: #f6f8fa;
+  border-radius: 6px;
+  border: 1px solid #e1e4e8;
+}
+.metric-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #0366d6;
+}
+.metric-label {
+  font-size: 14px;
+  color: #586069;
+}
+.funnel-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.funnel-label {
+  width: 150px;
+  font-weight: bold;
+}
+.funnel-fill {
+  height: 24px;
+  background: #0366d6;
+  color: white;
+  padding-left: 8px;
+  display: flex;
+  align-items: center;
+  border-radius: 3px;
+  min-width: 30px;
+}
