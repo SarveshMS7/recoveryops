@@ -31,7 +31,7 @@ import {
   type PolicyConfig,
   type PolicyEventContext,
 } from "../domain/policy.js";
-import { transition, EventState } from "../domain/state_machine.js";
+import { transition, EventState, isTerminal } from "../domain/state_machine.js";
 
 
 // ── Result types ──────────────────────────────────────────────────
@@ -42,7 +42,8 @@ export type ExecutionOutcome =
   | { readonly status: "stopped"; readonly detail: string | null }
   | { readonly status: "policy_rejected"; readonly reason: string }
   | { readonly status: "invalid_action"; readonly action: string }
-  | { readonly status: "idempotent_skip" };
+  | { readonly status: "idempotent_skip" }
+  | { readonly status: "already_terminal"; readonly state: string };
 
 // ── Use case ──────────────────────────────────────────────────────
 
@@ -65,6 +66,14 @@ export async function executeDecision(
   attemptNumber: number,
 ): Promise<ExecutionOutcome> {
   const idempotencyKey = `${event.id}:${attemptNumber}`;
+
+  const currentStateStr = await repo.getCurrentState(event.id);
+  if (currentStateStr && isTerminal(currentStateStr as EventState)) {
+    return {
+      status: "already_terminal",
+      state: currentStateStr,
+    };
+  }
 
   // ── Step 1: Call LLM for analysis ─────────────────────────────
 
@@ -196,7 +205,7 @@ export async function executeDecision(
   });
 
   if (execResult === null) {
-    // Idempotent duplicate — skip silently
+    // Idempotent duplicate — skip silently.
     return { status: "idempotent_skip" };
   }
 

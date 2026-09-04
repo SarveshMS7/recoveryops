@@ -120,7 +120,7 @@ export function checkCooldown(
     };
   }
 
-  const elapsedMs = ctx.now.getTime() - ctx.last_attempt_at.getTime();
+  const elapsedMs = Math.max(0, ctx.now.getTime() - ctx.last_attempt_at.getTime());
   const elapsedSeconds = elapsedMs / 1000;
   const required = config.min_interval_seconds;
   const passed = elapsedSeconds >= required;

@@ -162,6 +162,9 @@ describe("Task 15: Retry-then-stop Chaos Test", () => {
       event,
       2,
     );
+    if (outcome2.status === "policy_rejected") {
+      console.log("POLICY REJECTED REASON:", outcome2.reason);
+    }
     expect(outcome2.status).toBe("stopped");
     state = await repo.getCurrentState(eventId);
     expect(state).toBe("Stopped");
@@ -169,8 +172,7 @@ describe("Task 15: Retry-then-stop Chaos Test", () => {
     // Verify attempt count
     expect(gateway.calls.length).toBe(2);
     
-    // Attempt 3: If a worker erroneously tries it again, the policy should reject it (if we actually called the policy engine).
-    // Let's verify that attempt 3 gets PolicyRejected.
+    // Attempt 3: If a worker erroneously tries it again, it should short-circuit because Stopped is terminal.
     const outcome3 = await executeDecision(
       repo,
       llm,
@@ -179,8 +181,11 @@ describe("Task 15: Retry-then-stop Chaos Test", () => {
       event,
       3,
     );
-    expect(outcome3.status).toBe("policy_rejected");
+    expect(outcome3.status).toBe("already_terminal");
+    // @ts-expect-error (we know state exists on already_terminal)
+    expect(outcome3.state).toBe("Stopped");
+    
     state = await repo.getCurrentState(eventId);
-    expect(state).toBe("Escalated");
+    expect(state).toBe("Stopped");
   });
 });
