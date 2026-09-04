@@ -27,7 +27,7 @@ import type { SelectedAction } from "../../ports/types.js";
 
 export interface GeminiConfig {
   readonly api_key: string;
-  /** Model name. Defaults to "gemini-2.0-flash". */
+  /** Model name. Defaults to "gemini-3.6-flash". */
   readonly model?: string;
   /** Request timeout in ms. Defaults to 60 000. */
   readonly timeout_ms?: number;
@@ -48,7 +48,7 @@ interface GeminiResponse {
 
 const GEMINI_BASE =
   "https://generativelanguage.googleapis.com/v1beta/models";
-const DEFAULT_MODEL = "gemini-2.0-flash";
+const DEFAULT_MODEL = "gemini-3.6-flash";
 const DEFAULT_TIMEOUT_MS = 60_000;
 
 export class GeminiLlmClient implements LlmClient {

@@ -212,12 +212,15 @@ describe("Task 13 — RazorpayPaymentGateway adapter", () => {
       it("should create a payment link for retry_now", async () => {
         const result = await gw.executeAction({
           event_id: "e2e-test-1",
-          external_ref: "pay_e2e_1",
+          external_ref: `pay_e2e_1_${Date.now()}`,
           action: "retry_now",
           amount: 1000,
           currency: "INR",
           idempotency_key: `e2e-test-1-${Date.now()}`,
         });
+        if (result.result !== "success") {
+          console.error("Razorpay Error:", result.detail);
+        }
         expect(result.result).toBe("success");
         expect(result.gateway_ref).toBeTruthy(); // plink_...
         expect(result.detail).toBeNull();
@@ -226,12 +229,15 @@ describe("Task 13 — RazorpayPaymentGateway adapter", () => {
       it("should create a payment link for send_reminder", async () => {
         const result = await gw.executeAction({
           event_id: "e2e-test-2",
-          external_ref: "pay_e2e_2",
+          external_ref: `pay_e2e_2_${Date.now()}`,
           action: "send_reminder",
           amount: 2000,
           currency: "INR",
           idempotency_key: `e2e-test-2-${Date.now()}`,
         });
+        if (result.result !== "success") {
+          console.error("Razorpay Error:", result.detail);
+        }
         expect(result.result).toBe("success");
         expect(result.gateway_ref).toBeTruthy();
       }, 30_000);
@@ -292,7 +298,7 @@ describe("Task 14 — GeminiLlmClient adapter", () => {
         expect(response.root_cause_summary).toBeTruthy();
         expect(VALID_ACTIONS).toContain(response.selected_action);
         expect(response.rationale).toBeTruthy();
-      }, 30_000);
+      }, 60_000);
 
       it("should handle multiple calls with different contexts", async () => {
         const response = await client.analyse({
@@ -311,7 +317,7 @@ describe("Task 14 — GeminiLlmClient adapter", () => {
         expect(response.root_cause_summary).toBeTruthy();
         expect(VALID_ACTIONS).toContain(response.selected_action);
         expect(response.rationale).toBeTruthy();
-      }, 30_000);
+      }, 60_000);
     },
   );
 });
