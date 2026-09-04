@@ -90,7 +90,12 @@ tr:hover {
 
 .badge.succeeded { background: #28a745; color: white; }
 .badge.failed { background: #d73a49; color: white; }
+.badge.stopped { background: #cb2431; color: white; }
+.badge.escalated { background: #e36209; color: white; }
 .badge.detected { background: #dbab09; color: white; }
+.badge.allocated { background: #0366d6; color: white; }
+.badge.skipped { background: #959da5; color: white; }
+.badge.parked_control { background: #586069; color: white; }
 .badge.treatment { background: #6f42c1; color: white; }
 .badge.control { background: #6a737d; color: white; }
 

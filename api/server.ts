@@ -29,10 +29,10 @@ app.get('/api/funnel', async (req, res) => {
           ROW_NUMBER() OVER (PARTITION BY event_id ORDER BY occurred_at DESC) as rn
         FROM audit_log
       )
-      SELECT stage as state, COUNT(*) as count
-      FROM latest_states
-      WHERE rn = 1
-      GROUP BY stage
+      SELECT COALESCE(ls.stage, 'Detected') as state, COUNT(*) as count
+      FROM risk_event r
+      LEFT JOIN latest_states ls ON ls.event_id = r.id AND ls.rn = 1
+      GROUP BY COALESCE(ls.stage, 'Detected')
       ORDER BY count DESC;
     `);
     res.json(result.rows);
@@ -61,6 +61,7 @@ app.get('/api/incrementality', async (req, res) => {
           COALESCE(ls.stage, 'Detected') as final_state
         FROM risk_event r
         LEFT JOIN latest_states ls ON ls.event_id = r.id AND ls.rn = 1
+        WHERE r."group" IS NOT NULL
       )
       SELECT 
         experiment_group,
