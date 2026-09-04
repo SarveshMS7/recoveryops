@@ -144,6 +144,9 @@ describe("Task 16: Concurrent execution / idempotency", () => {
     // Verify there is exactly one Succeeded state in the audit_log
     const auditLogs = await repo.findAuditLogsByEventId(eventId);
     const succeededLogs = auditLogs.filter((log) => log.stage === "Succeeded");
+    if (succeededLogs.length !== 1) {
+      console.log("AUDIT LOGS:", JSON.stringify(auditLogs, null, 2));
+    }
     expect(succeededLogs.length).toBe(1);
 
     // Verify exactly one action_execution row was inserted
@@ -153,6 +156,10 @@ describe("Task 16: Concurrent execution / idempotency", () => {
     
     // Check current state is Succeeded
     const finalState = await repo.getCurrentState(eventId);
+    if (finalState !== "Succeeded") {
+      const logs = await repo.findAuditLogsByEventId(eventId);
+      console.log("AUDIT LOGS:", JSON.stringify(logs, null, 2));
+    }
     expect(finalState).toBe("Succeeded");
   });
 });

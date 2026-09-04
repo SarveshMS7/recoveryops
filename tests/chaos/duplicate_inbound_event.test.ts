@@ -116,7 +116,7 @@ describe("Task 17: Duplicate inbound event", () => {
     // Outbox should also only have one row
     const client = await appPool.connect();
     try {
-      const outboxRes = await client.query("SELECT id FROM outbox WHERE dedupe_key = $1", [dedupeKey]);
+      const outboxRes = await client.query("SELECT id FROM outbox WHERE event_id = $1", [eventId]);
       expect(outboxRes.rows.length).toBe(1);
     } finally {
       client.release();

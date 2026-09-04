@@ -11,6 +11,8 @@
 
 import pg from "pg";
 import { randomUUID } from "node:crypto";
+import { transition, IllegalTransitionError, ALL_STATES } from "../../domain/state_machine.js";
+import type { EventState } from "../../domain/state_machine.js";
 import type {
   EventRepository,
   InsertRiskEvent,
@@ -414,19 +416,54 @@ export class PgEventRepository implements EventRepository {
 
   async getCurrentState(eventId: string): Promise<string | null> {
     const result = await this.pool.query(
-      `SELECT stage FROM audit_log WHERE event_id = $1 ORDER BY occurred_at DESC LIMIT 1`,
-      [eventId],
+      `SELECT stage FROM audit_log WHERE event_id = $1 AND stage = ANY($2) ORDER BY occurred_at DESC LIMIT 1`,
+      [eventId, ALL_STATES],
     );
     if (result.rows.length === 0) return null;
     return (result.rows[0] as Record<string, unknown>)["stage"] as string;
   }
 
   async updateState(eventId: string, state: string): Promise<void> {
-    // Persist as an audit log entry so state history is tracked
-    await this.insertAuditLog({
-      event_id: eventId,
-      stage: state,
-      detail: { transitioned_to: state },
-    });
+    const client = await this.pool.connect();
+    try {
+      await client.query("BEGIN");
+      
+      // Read current state inside the transaction
+      const result = await client.query(
+        `SELECT stage FROM audit_log WHERE event_id = $1 AND stage = ANY($2) ORDER BY occurred_at DESC LIMIT 1`,
+        [eventId, ALL_STATES]
+      );
+      const current = result.rows.length > 0 ? (result.rows[0] as any).stage : null;
+      
+      if (current !== state) {
+        if (current !== null) {
+          try {
+            transition(current as EventState, state as EventState);
+          } catch (err) {
+            if (err instanceof IllegalTransitionError) {
+              // Another concurrent writer already advanced this event past this point.
+              // Skip the write, do not append to the audit log, do not error out.
+              await client.query("ROLLBACK");
+              return;
+            }
+            throw err;
+          }
+        }
+
+        // We do a direct INSERT here inside the transaction instead of calling this.insertAuditLog
+        // because this.insertAuditLog uses the general pool, not this client transaction.
+        await client.query(
+          `INSERT INTO audit_log (event_id, stage, detail) VALUES ($1, $2, $3)`,
+          [eventId, state, { transitioned_to: state }]
+        );
+      }
+      
+      await client.query("COMMIT");
+    } catch (err) {
+      await client.query("ROLLBACK");
+      throw err;
+    } finally {
+      client.release();
+    }
   }
 }
