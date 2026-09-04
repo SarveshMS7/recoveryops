@@ -333,9 +333,11 @@ describe.skipIf(!HAS_ALL)(
     let geminiLlm: GeminiLlmClient;
 
     async function seedAllocatedEvent(suffix: string): Promise<string> {
+      const shortSuffix = suffix.replace(/[^a-zA-Z0-9]/g, "").slice(-6);
+      const unique = `${shortSuffix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
       const result = await ingestEvent(repo, {
-        source: "razorpay",
-        external_ref: `real_adapter_${suffix}`,
+        source: "rzp",
+        external_ref: unique,
         merchant_id: MERCHANT_ID,
         source_type: "payment_failure",
         customer_id: `cust_${suffix}`,

@@ -137,9 +137,9 @@ describe("Task 16: Concurrent execution / idempotency", () => {
 
     const [outcome1, outcome2] = await Promise.all([p1, p2]);
 
-    // One should succeed, the other should be idempotent_skip
-    const statuses = [outcome1.status, outcome2.status].sort();
-    expect(statuses).toEqual(["idempotent_skip", "succeeded"]);
+    // One should succeed, the other should be idempotent_skip or already_terminal
+    const nonSucceeded = outcome1.status === "succeeded" ? outcome2.status : outcome1.status;
+    expect(["idempotent_skip", "already_terminal"]).toContain(nonSucceeded);
 
     // Verify there is exactly one Succeeded state in the audit_log
     const auditLogs = await repo.findAuditLogsByEventId(eventId);

@@ -143,7 +143,7 @@ export class RazorpayPaymentGateway implements PaymentGateway {
       amount: request.amount,
       currency: request.currency,
       description: `Recovery: ${request.action} for event ${request.event_id}`,
-      reference_id: request.external_ref,
+      reference_id: this.sanitiseReceipt(request.external_ref),
     };
 
     switch (request.action) {

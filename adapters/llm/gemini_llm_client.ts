@@ -211,25 +211,34 @@ export class GeminiLlmClient implements LlmClient {
       },
     };
 
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), this.timeoutMs);
+    let response: Response | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), this.timeoutMs);
+      try {
+        response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timer);
+      }
 
-    let response: Response;
-    try {
-      response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-        signal: controller.signal,
-      });
-    } finally {
-      clearTimeout(timer);
+      if (response.status === 503 || response.status === 429) {
+        if (attempt < 2) {
+          await new Promise((r) => setTimeout(r, 2000 * (attempt + 1)));
+          continue;
+        }
+      }
+      break;
     }
 
-    if (!response.ok) {
-      const errText = await response.text().catch(() => "(unreadable)");
+    if (!response || !response.ok) {
+      const errText = await response?.text().catch(() => "(unreadable)") ?? "(no response)";
       throw new Error(
-        `GeminiLlmClient: Gemini API returned HTTP ${response.status}: ${errText.slice(0, 300)}`,
+        `GeminiLlmClient: Gemini API returned HTTP ${response?.status}: ${errText.slice(0, 300)}`,
       );
     }
 
