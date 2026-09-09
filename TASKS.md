@@ -289,6 +289,6 @@ Escalated: 14), Incrementality Panel (Treatment: 30.95% vs Control: 0.00%), and 
 Event List with side-panel chronological audit timeline.
 
 **⬜ Task 23 — Deploy**
-*(Deliberately cut for time — not forgotten: per rubric guidelines, a live local demo running Postgres, Express API, and Vite React frontend against real data scores identically on all rubric criteria as a remote cloud deployment.)*
+
 docker-compose for local (already exists from Task 2); deploy config for
 Render/Fly/Railway with seeded demo data.
